@@ -18,9 +18,12 @@ class Customer(User):
     def add_to_cart(self, restaurant, item_name, quantity):
         item = restaurant.menu.find_item(item_name)
         if item:
-            item.quantity = quantity
-            self.cart.add_item(item)
-            print("Item Added")
+            if quantity > item.quantity:
+                print("Item quantity exceeded !!")
+            else:
+                item.quantity = quantity
+                self.cart.add_item(item)
+                print("Item Added")
         else:
             print("Item not Found")
 
@@ -28,7 +31,7 @@ class Customer(User):
         print("**View Cart")
         print("Name\tprice\tQuantity")
         for item, quantity in self.cart.items.items():
-            print(f"{item.name} {item.price} {quantity}")
+            print(f"{item.name}\t{item.price}\t{quantity}")
         print(f"Total Price: {self.cart.total_price}")
 
 class Order:
@@ -44,9 +47,10 @@ class Order:
     def remove(self, item):
         if item in self.items:
             del self.items[item]
-
+    
+    @property
     def total_price(self):
-        return sum(item.price * quantity for item, quantity in self.items.item())
+        return sum(item.price * quantity for item, quantity in self.items.items())
 
     def clear(self):
         self.items = {}
@@ -102,7 +106,7 @@ class Menu:
         for item in self.items: 
             if item.name.lower() == item_name.lower():
                 return item
-            return None
+        return None
     
     def remove_item(self, item_name):
         item = self.find_item(item_name)
@@ -139,6 +143,12 @@ admin.add_new_item(mamar_res, item2)
 
 customer1 = Customer("Nahid", 134535, "nahid@gmail.com", "Dhaka")
 customer1.view_menu(mamar_res)
+
+item_name = input("Enter Item Name: ")
+item_quantity = int(input("Enter Item Quantity: "))
+
+customer1.add_to_cart(mamar_res,item_name, item_quantity)
+customer1.view_cart()
 
 
 
