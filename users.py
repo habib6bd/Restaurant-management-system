@@ -10,15 +10,17 @@ class User(ABC):
 class Customer(User):
     def __init__(self, name, phone, email, address):
         super().__init__(name, phone, email, address)
-        self.cart = None
+        self.cart = Order()
 
     def view_menu(self, restaurant):
         restaurant.menu.show_menu()
 
-    def add_to_cart(self, restaurant, item_name):
+    def add_to_cart(self, restaurant, item_name, quantity):
         item = restaurant.menu.find_item(item_name)
         if item:
-            pass
+            item.quantity = quantity
+            self.cart.add_item(item)
+            print("Item Added")
         else:
             print("Item not Found")
 
@@ -49,8 +51,6 @@ class Order:
     def clear(self):
         self.items = {}
 
-    
-
 
 class Employee(User):
     def __init__(self, name, phone, email, address, age, designation, salary):
@@ -80,7 +80,7 @@ class Restaurant:
     def __init__(self, name):
         self.name = name
         self.employees = [] #database
-        self.menu = FoodItem()
+        self.menu = Menu()
 
     def add_employee(self, employee):
         self.employees.append(employee)
@@ -128,10 +128,17 @@ class FoodItem:
 # ad.add_employee("Nahid", 23456, "nahid@gmail.com", "Gazipur", 23, "Volunteer", 12000)
 # ad.view_employee()
 
+mamar_res = Restaurant("Mamar Resturant")
 mn = Menu()
 item = FoodItem("Pizza", 12.10, 10)
-mn.add_menu_item(item)
-mn.show_menu()
+item2 = FoodItem("Burger", 10, 30)
+
+admin = Admin("Rahim", 134535, "rahim@gmail.com", "cha")
+admin.add_new_item(mamar_res, item)
+admin.add_new_item(mamar_res, item2)
+
+customer1 = Customer("Nahid", 134535, "nahid@gmail.com", "Dhaka")
+customer1.view_menu(mamar_res)
 
 
 
